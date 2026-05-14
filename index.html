@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>I'm Sorry — A Cute Apology</title>
+  <style>
+    :root{
+      --bg:#fff7fb;
+      --card:#ffffff;
+      --accent:#ff9bb3;
+      --muted:#7b6f8a;
+      --shadow: 0 8px 30px rgba(99,66,99,0.08);
+      --glass: rgba(255,255,255,0.6);
+      --flower1: url('https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=800&q=60');
+      --flower2: url('https://images.unsplash.com/photo-1504198453319-5ce911bafcde?auto=format&fit=crop&w=800&q=60');
+      --flower3: url('https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=600&q=60');
+    }
+
+    html,body{
+      height:100%;
+      margin:0;
+      font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg, #fff7fb 0%, #fef6f8 50%, #fff 100%);
+      color:#3b2b3b;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .container{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:40px 20px;
+      box-sizing:border-box;
+    }
+
+    .card{
+      width:100%;
+      max-width:980px;
+      background:var(--card);
+      border-radius:20px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      display:grid;
+      grid-template-columns: 1fr 420px;
+      gap:0;
+      position:relative;
+    }
+
+    /* Left: message area */
+    .left{
+      padding:48px;
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+      justify-content:center;
+      background:
+        radial-gradient(600px 200px at 10% 10%, rgba(255,155,179,0.06), transparent 10%),
+        linear-gradient(180deg, rgba(255,250,253,0.9), rgba(255,250,253,0.6));
+    }
+
+    .title{
+      font-size:34px;
+      line-height:1.05;
+      margin:0;
+      color:#3b2b3b;
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+
+    .title .heart{
+      font-size:34px;
+      transform:translateY(-2px);
+      filter:drop-shadow(0 4px 8px rgba(255,155,179,0.18));
+    }
+
+    .subtitle{
+      color:var(--muted);
+      font-size:15px;
+      margin:0;
+      max-width:46ch;
+    }
+
+    .flowers-row{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      margin-top:6px;
+    }
+
+    .flower{
+      width:64px;
+      height:64px;
+      border-radius:12px;
+      background-size:cover;
+      background-position:center;
+      box-shadow:0 6px 18px rgba(99,66,99,0.06);
+      transform:translateY(0);
+      transition:transform .35s ease;
+      cursor:pointer;
+      border:3px solid rgba(255,255,255,0.6);
+    }
+
+    .flower:hover{ transform:translateY(-8px) rotate(-3deg); }
+
+    .cta{
+      margin-top:18px;
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
+
+    .btn{
+      background:linear-gradient(180deg,var(--accent),#ff7aa0);
+      color:white;
+      border:none;
+      padding:12px 18px;
+      border-radius:12px;
+      font-weight:600;
+      cursor:pointer;
+      box-shadow:0 8px 20px rgba(255,122,160,0.18);
+      transition:transform .18s ease, box-shadow .18s ease;
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+    }
+
+    .btn:active{ transform:translateY(2px); box-shadow:0 6px 14px rgba(255,122,160,0.12); }
+
+    .btn.ghost{
+      background:transparent;
+      color:var(--muted);
+      border:1px dashed rgba(123,111,138,0.12);
+      font-weight:600;
+    }
+
+    /* Right: collage */
+    .right{
+      padding:28px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.02)),
+        url('https://images.unsplash.com/photo-1504198453319-5ce911bafcde?auto=format&fit=crop&w=1200&q=60') center/cover no-repeat;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      position:relative;
+      min-height:360px;
+    }
+
+    .photo-grid{
+      width:100%;
+      max-width:360px;
+      display:grid;
+      grid-template-columns: repeat(2,1fr);
+      gap:12px;
+      transform:translateY(-6px);
+    }
+
+    .photo{
+      height:140px;
+      border-radius:14px;
+      overflow:hidden;
+      position:relative;
+      box-shadow:0 10px 30px rgba(99,66,99,0.08);
+      border:6px solid rgba(255,255,255,0.6);
+      background-size:cover;
+      background-position:center;
+    }
+
+    .emoji-bubble{
+      position:absolute;
+      left:18px;
+      bottom:18px;
+      background:var(--glass);
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:20px;
+      box-shadow:0 6px 18px rgba(99,66,99,0.06);
+      display:flex;
+      gap:8px;
+      align-items:center;
+      color:#3b2b3b;
+    }
+
+    /* Letter modal */
+    .overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(20,12,20,0.36);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:60;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .25s ease;
+    }
+
+    .overlay.show{
+      opacity:1;
+      pointer-events:auto;
+    }
+
+    .letter{
+      width:100%;
+      max-width:720px;
+      background:linear-gradient(180deg,#fff,#fff9fb);
+      border-radius:16px;
+      padding:28px;
+      box-shadow:0 30px 80px rgba(45,20,40,0.28);
+      transform:translateY(20px) scale(.98);
+      transition:transform .28s cubic-bezier(.2,.9,.2,1);
+    }
+
+    .overlay.show .letter{ transform:translateY(0) scale(1); }
+
+    .letter h2{
+      margin:0 0 8px 0;
+      font-size:22px;
+      color:#3b2b3b;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .letter p{
+      margin:10px 0;
+      color:#5a4b5f;
+      line-height:1.6;
+      font-size:15px;
+    }
+
+    .letter .actions{
+      display:flex;
+      gap:10px;
+      justify-content:flex-end;
+      margin-top:14px;
+    }
+
+    .small{
+      font-size:13px;
+      color:#8b7f95;
+    }
+
+    /* Cute floating petals */
+    .petal{
+      position:absolute;
+      width:18px;
+      height:18px;
+      background:linear-gradient(180deg,#ffd6e0,#ffb6d0);
+      border-radius:50% 50% 50% 10%;
+      transform:rotate(25deg);
+      opacity:.9;
+      filter:drop-shadow(0 6px 12px rgba(255,122,160,0.12));
+      animation:float 6s linear infinite;
+      z-index:10;
+    }
+
+    .petal.p1{ left:8%; top:6%; animation-duration:7s; animation-delay:0s; }
+    .petal.p2{ left:22%; top:12%; animation-duration:5.5s; animation-delay:1s; }
+    .petal.p3{ right:12%; top:8%; animation-duration:6.5s; animation-delay:.6s; }
+    .petal.p4{ right:6%; bottom:12%; animation-duration:8s; animation-delay:1.2s; }
+    .petal.p5{ left:40%; bottom:6%; animation-duration:6.8s; animation-delay:.3s; }
+
+    @keyframes float{
+      0%{ transform:translateY(0) rotate(0deg) scale(1); opacity:.95; }
+      50%{ transform:translateY(-28px) rotate(45deg) scale(.95); opacity:.8; }
+      100%{ transform:translateY(0) rotate(90deg) scale(1); opacity:.95; }
+    }
+
+    /* Responsive */
+    @media (max-width:880px){
+      .card{ grid-template-columns: 1fr; }
+      .right{ min-height:260px; padding:18px; }
+      .left{ padding:28px; }
+      .photo{ height:110px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card" role="main" aria-labelledby="apologyTitle">
+      <div class="left">
+        <h1 id="apologyTitle" class="title">
+          <span class="heart">💗</span>
+          I'm sorry
+        </h1>
+        <p class="subtitle">A small, sincere page to say I messed up — and I truly want to make things right. Flowers, hugs, and a little emoji to soften the moment.</p>
+
+        <div class="flowers-row" aria-hidden="false">
+          <div class="flower" title="Peony" style="background-image:var(--flower1)"></div>
+          <div class="flower" title="Rose" style="background-image:var(--flower2)"></div>
+          <div class="flower" title="Daisy" style="background-image:var(--flower3)"></div>
+          <div class="flower" title="Sunshine" style="background-image:linear-gradient(135deg,#ffd6e0,#fff1f6)"></div>
+        </div>
+
+        <div class="cta">
+          <button id="forgiveBtn" class="btn" aria-haspopup="dialog" aria-controls="apologyModal">
+            <span>🙏</span>
+            <span>Forgive</span>
+          </button>
+          <button id="sendHug" class="btn ghost" title="Send a virtual hug">🤗 Send a hug</button>
+        </div>
+
+        <p class="small">Tip: Click the flowers for a tiny surprise. If you're not ready, that's okay — take your time.</p>
+      </div>
+
+      <div class="right" aria-hidden="true">
+        <div class="photo-grid" role="img" aria-label="Floral collage">
+          <div class="photo" style="background-image:url('https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=800&q=60')"></div>
+          <div class="photo" style="background-image:url('https://images.unsplash.com/photo-1496317899792-9d7dbcd928a1?auto=format&fit=crop&w=800&q=60')"></div>
+          <div class="photo" style="background-image:url('https://images.unsplash.com/photo-1504198453319-5ce911bafcde?auto=format&fit=crop&w=800&q=60')"></div>
+          <div class="photo" style="background-image:url('https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=800&q=60')"></div>
+        </div>
+
+        <div class="emoji-bubble" aria-hidden="true">🌸 Sorry... 🌼</div>
+      </div>
+
+      <!-- floating petals -->
+      <div class="petal p1" aria-hidden="true"></div>
+      <div class="petal p2" aria-hidden="true"></div>
+      <div class="petal p3" aria-hidden="true"></div>
+      <div class="petal p4" aria-hidden="true"></div>
+      <div class="petal p5" aria-hidden="true"></div>
+    </div>
+  </div>
+
+  <!-- Modal / Letter -->
+  <div id="apologyModal" class="overlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="letter" role="document">
+      <h2>Dear you, <span style="font-size:18px">💌</span></h2>
+      <div id="letterContent" aria-live="polite">
+        <p class="small">Loading message…</p>
+      </div>
+
+      <div class="actions">
+        <button id="closeBtn" class="btn ghost">Close</button>
+        <button id="acceptBtn" class="btn">I forgive you</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Elements
+    const forgiveBtn = document.getElementById('forgiveBtn');
+    const sendHug = document.getElementById('sendHug');
+    const overlay = document.getElementById('apologyModal');
+    const letterContent = document.getElementById('letterContent');
+    const closeBtn = document.getElementById('closeBtn');
+    const acceptBtn = document.getElementById('acceptBtn');
+    const flowers = document.querySelectorAll('.flower');
+
+    // Apology letter text (keeps it personal and sincere)
+    const letterText = [
+      "I want to start by saying I'm truly sorry.",
+      "I know my words/actions hurt you, and I take full responsibility for that.",
+      "There is no excuse for what happened. I was thoughtless and I didn't consider how you'd feel.",
+      "You mean a lot to me, and the last thing I want is to cause you pain.",
+      "If you're willing, I want to listen, learn, and do better. I will make changes so this doesn't happen again.",
+      "Take all the time you need. I will be here, ready to talk when you are.",
+      "With a hopeful heart,",
+      "— Yours"
+    ];
+
+    // Typewriter reveal
+    function revealLetter(lines, container, speed = 28) {
+      container.innerHTML = '';
+      let i = 0;
+      function nextLine() {
+        if (i >= lines.length) return;
+        const p = document.createElement('p');
+        p.style.margin = '10px 0';
+        container.appendChild(p);
+        let j = 0;
+        const text = lines[i];
+        const interval = setInterval(() => {
+          p.textContent += text[j] || '';
+          j++;
+          if (j > text.length) {
+            clearInterval(interval);
+            i++;
+            setTimeout(nextLine, 220);
+          }
+        }, speed);
+      }
+      nextLine();
+    }
+
+    // Show modal
+    function openModal() {
+      overlay.classList.add('show');
+      overlay.setAttribute('aria-hidden','false');
+      revealLetter(letterText, letterContent, 22);
+      // gentle focus
+      setTimeout(()=> acceptBtn.focus(), 600);
+    }
+
+    // Close modal
+    function closeModal() {
+      overlay.classList.remove('show');
+      overlay.setAttribute('aria-hidden','true');
+      letterContent.innerHTML = '<p class="small">Loading message…</p>';
+      forgiveBtn.focus();
+    }
+
+    // Forgive action
+    function acceptForgiveness() {
+      acceptBtn.disabled = true;
+      acceptBtn.textContent = 'Thank you 💖';
+      // small confetti effect (simple)
+      for (let i=0;i<24;i++){
+        const dot = document.createElement('div');
+        dot.style.position='fixed';
+        dot.style.left=(40+Math.random()*20)+'%';
+        dot.style.top=(40+Math.random()*20)+'%';
+        dot.style.width='8px';
+        dot.style.height='8px';
+        dot.style.borderRadius='50%';
+        dot.style.background=['#ffd6e0','#ffb6d0','#ffd9a6','#cde7ff'][Math.floor(Math.random()*4)];
+        dot.style.opacity='0.95';
+        dot.style.transform='translateY(0) scale(1)';
+        dot.style.zIndex=120;
+        document.body.appendChild(dot);
+        const dur = 900 + Math.random()*900;
+        dot.animate([
+          { transform: 'translateY(0) rotate(0deg) scale(1)', opacity:1 },
+          { transform: `translateY(${ -120 - Math.random()*200 }px) rotate(${Math.random()*360}deg) scale(.9)`, opacity:0.9 }
+        ], { duration: dur, easing:'cubic-bezier(.2,.9,.2,1)'});
+        setTimeout(()=> dot.remove(), dur+80);
+      }
+      // gentle close after a moment
+      setTimeout(closeModal, 1400);
+    }
+
+    // Flower click surprise
+    flowers.forEach((f, idx) => {
+      f.addEventListener('click', () => {
+        f.animate([
+          { transform: 'translateY(0) scale(1)' },
+          { transform: 'translateY(-18px) scale(1.06) rotate(-6deg)' },
+          { transform: 'translateY(0) scale(1)' }
+        ], { duration: 520, easing: 'ease-out' });
+        // tiny emoji pop
+        const pop = document.createElement('div');
+        pop.textContent = ['🌸','🌷','💐','🌼'][idx % 4];
+        pop.style.position='absolute';
+        pop.style.left=(f.getBoundingClientRect().left + 12)+'px';
+        pop.style.top=(f.getBoundingClientRect().top - 6)+'px';
+        pop.style.fontSize='22px';
+        pop.style.zIndex=200;
+        document.body.appendChild(pop);
+        pop.animate([
+          { transform:'translateY(0) scale(1)', opacity:1 },
+          { transform:'translateY(-48px) scale(1.2)', opacity:0 }
+        ], { duration: 900, easing:'cubic-bezier(.2,.9,.2,1)'});
+        setTimeout(()=> pop.remove(), 920);
+      });
+    });
+
+    // Event listeners
+    forgiveBtn.addEventListener('click', openModal);
+    closeBtn.addEventListener('click', closeModal);
+    acceptBtn.addEventListener('click', acceptForgiveness);
+    sendHug.addEventListener('click', () => {
+      sendHug.animate([{ transform:'scale(1)' }, { transform:'scale(.96)' }, { transform:'scale(1)' }], { duration:260 });
+      // small toast
+      const toast = document.createElement('div');
+      toast.textContent = 'Hug sent 🤗';
+      toast.style.position='fixed';
+      toast.style.right='18px';
+      toast.style.bottom='18px';
+      toast.style.background='linear-gradient(180deg,#fff,#fff9fb)';
+      toast.style.padding='10px 14px';
+      toast.style.borderRadius='12px';
+      toast.style.boxShadow='0 12px 30px rgba(45,20,40,0.12)';
+      toast.style.zIndex=200;
+      document.body.appendChild(toast);
+      setTimeout(()=> toast.animate([{opacity:1},{opacity:0}],{duration:700}),1200);
+      setTimeout(()=> toast.remove(),2000);
+    });
+
+    // Close modal on overlay click (but not when clicking inside letter)
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeModal();
+    });
+
+    // Keyboard accessibility
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && overlay.classList.contains('show')) closeModal();
+    });
+  </script>
+</body>
+</html>
